@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "fashion-recommender"
+version = "0.1.0"
+description = "A fashion recommender for H&M datasets"
+authors = ["Andre Fernandes <andre.b.fernandes@farfetch.com>"]
+readme = "README.md"
+packages = [{include = "fashion_recommender"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+tensorflow = "^2.10.0"
+pandas = "^1.4.4"
+sklearn = "^0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
