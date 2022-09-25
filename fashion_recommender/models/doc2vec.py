@@ -25,7 +25,7 @@ class Doc2Vec(Model):
         self.softmax = tf.keras.layers.Softmax()
         self.compile(
             optimizer="adam",
-            loss=tf.keras.losses.CategoricalCrossentropy(from_logits=False),
+            loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
         )
 
     def call(self, inputs):
