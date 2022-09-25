@@ -11,6 +11,9 @@ python = ">=3.9,<3.11"
 tensorflow = "^2.10.0"
 pandas = "^1.4.4"
 sklearn = "^0.0"
+matplotlib = "^3.6.0"
+PyYAML = "^6.0"
+h5py = "^3.7.0"
 
 
 [build-system]

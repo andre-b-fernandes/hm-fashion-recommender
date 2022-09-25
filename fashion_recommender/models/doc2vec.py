@@ -1,43 +1,45 @@
 import tensorflow as tf
 
+from fashion_recommender.models.base import Model
 
-class Doc2Vec(tf.keras.Model):
+
+class Doc2Vec(Model):
     EMBEDDING_SIZE = 256
 
     def __init__(self, vocabulary_size: int, ngram_size: int):
         super(Doc2Vec, self).__init__()
+        self.ngram_size = ngram_size
+        self.vocabulary_size = vocabulary_size
         self.paragraph_embeddings = tf.keras.layers.Embedding(
             input_dim=vocabulary_size,
             output_dim=self.EMBEDDING_SIZE,
-            input_length=1
+            input_length=vocabulary_size
         )
 
         self.context_embeddings = tf.keras.layers.Embedding(
             input_dim=vocabulary_size,
             output_dim=self.EMBEDDING_SIZE,
-            input_length=ngram_size - 1
+            input_length=vocabulary_size
         )
 
         self.softmax = tf.keras.layers.Softmax()
-
-       # TODO: add this
-       #  self.target_embedding = tf.keras.layers.Embedding(
-       #      input_dim=vocabulary_size,
-       #      output_dim=self.EMBEDDING_SIZE,
-       #      input_length=1
-       #  )
+        self.compile(
+            optimizer="adam",
+            loss=tf.keras.losses.CategoricalCrossentropy(from_logits=False),
+        )
 
     def call(self, inputs):
         # EXPLORE USE TF SPARSE TENSORS
-        paragraph, context = inputs
+        paragraph, context = inputs[:,0], inputs[:,1]
+
         paragraph_embedding = self.paragraph_embeddings(paragraph)
         context_embedding = self.context_embeddings(context)
-        mean_context = tf.math.reduce_mean(context_embedding, axis=1)
-
-        return tf.reduce_sum(
-            tf.math.multiply(
-                tf.squeeze(paragraph_embedding),
-                mean_context
-            ), 
+            
+        reduced = tf.reduce_mean(
+            paragraph_embedding + context_embedding,
             axis=2
         )
+        reduced = tf.expand_dims(reduced, axis=1)
+
+        return self.softmax(reduced)
+

@@ -1,7 +1,6 @@
 from fashion_recommender.data.articles import ArticlesDataset
 from fashion_recommender.models.doc2vec import Doc2Vec
-
-import tensorflow as tf
+from fashion_recommender.models.plotters import ModelPlotter
 
 
 if __name__ == "__main__":
@@ -12,8 +11,7 @@ if __name__ == "__main__":
         ngram_size=articles_dataset.window
     )
 
-    model.compile(
-        optimizer="adam",
-        loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
-    )
-    model.fit(ds, epochs=1)
+    model.fit(ds, epochs=40)
+    plotter = ModelPlotter()
+    plotter.plot(model=model)
+    plotter.show()

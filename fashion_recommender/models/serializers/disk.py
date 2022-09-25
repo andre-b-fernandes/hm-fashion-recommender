@@ -1,0 +1,2 @@
+class DiskSerializer:
+    pass
