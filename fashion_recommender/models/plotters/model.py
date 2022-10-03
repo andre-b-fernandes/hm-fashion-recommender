@@ -8,6 +8,7 @@ class ModelPlotter:
         for column in history.columns:
             series = history[column]
             ax_plt = series.plot()
+            ax_plt.set_title(model.name)
             ax_plt.set_xlabel("Epochs")
             ax_plt.set_ylabel(column)
 

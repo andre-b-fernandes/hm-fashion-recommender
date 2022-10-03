@@ -1,17 +1,24 @@
-from fashion_recommender.data.articles import ArticlesDataset
+from fashion_recommender.data.articles import Articles
 from fashion_recommender.models.doc2vec import Doc2Vec
 from fashion_recommender.models.plotters import ModelPlotter
+from fashion_recommender.models.serializers.disk import DiskSerializer
+from fashion_recommender.models.deserializers.disk import DiskDeserializer
 
 
 if __name__ == "__main__":
-    articles_dataset = ArticlesDataset(window_size=3)
-    ds = articles_dataset.to_tf_dataset()
+    articles = Articles(window=5)
     model = Doc2Vec(
-        vocabulary_size=articles_dataset.vocabulary_size,
-        ngram_size=articles_dataset.window
+        n_paragraphs=articles.n_paragraphs,
+        vocabulary_size=articles.vocabulay_size,
+        ngram_size=articles.window
     )
 
-    model.fit(ds, epochs=40)
+    model.fit(articles.dataset, epochs=50)
     plotter = ModelPlotter()
+    serializer = DiskSerializer()
+    serializer.write(model)
     plotter.plot(model=model)
     plotter.show()
+    # deserializer = DiskDeserializer()
+    # model = deserializer.load(custom_type=Doc2Vec)
+    # import pdb; pdb.set_trace()

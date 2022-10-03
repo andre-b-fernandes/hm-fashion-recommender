@@ -4,13 +4,20 @@ from fashion_recommender.models.base import Model
 
 
 class Doc2Vec(Model):
-    EMBEDDING_SIZE = 256
+    EMBEDDING_SIZE = 128
 
-    def __init__(self, vocabulary_size: int, ngram_size: int):
+    def __init__(self, n_paragraphs: int, vocabulary_size: int, ngram_size: int):
         super(Doc2Vec, self).__init__()
         self.ngram_size = ngram_size
         self.vocabulary_size = vocabulary_size
+        self.n_paragraphs = n_paragraphs
         self.paragraph_embeddings = tf.keras.layers.Embedding(
+            input_dim=n_paragraphs,
+            output_dim=self.EMBEDDING_SIZE,
+            input_length=1
+        )
+
+        self.word_embeddings = tf.keras.layers.Embedding(
             input_dim=vocabulary_size,
             output_dim=self.EMBEDDING_SIZE,
             input_length=vocabulary_size
@@ -28,18 +35,31 @@ class Doc2Vec(Model):
             loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
         )
 
-    def call(self, inputs):
+    def call(self, inputs: tuple):
         # EXPLORE USE TF SPARSE TENSORS
-        paragraph, context = inputs[:,0], inputs[:,1]
+        paragraphs, features = inputs
+        paragraph_repr, context_repr = features[:,0,:], features[:,1,:]
 
-        paragraph_embedding = self.paragraph_embeddings(paragraph)
-        context_embedding = self.context_embeddings(context)
-            
+        paragraph_embedding = self.paragraph_embeddings(paragraphs)
+        context_embedding = self.context_embeddings(context_repr)
+        word_embedding = self.word_embeddings(paragraph_repr)
+
         reduced = tf.reduce_mean(
-            paragraph_embedding + context_embedding,
+            paragraph_embedding + context_embedding + word_embedding,
             axis=2
         )
         reduced = tf.expand_dims(reduced, axis=1)
 
         return self.softmax(reduced)
+
+    def get_config(self) -> dict:
+        return {
+            "vocabulary_size": self.vocabulary_size,
+            "ngram_size": self.vocabulary_size,
+            "n_paragraphs": self.n_paragraphs
+        }
+    
+    @classmethod
+    def from_config(cls, config: dict) -> "Doc2Vec":
+        return cls(**config)
 
