@@ -1,4 +1,7 @@
+from typing import List
+import numpy as np
 import tensorflow as tf
+from fashion_recommender.data.articles import Articles
 
 from fashion_recommender.models.base import Model
 
@@ -34,6 +37,10 @@ class Doc2Vec(Model):
             optimizer="adam",
             loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
         )
+    
+    def fit(self, data: Articles, epochs: int):
+        self.add_extra(data.pid_encoder, name="pid_encoder")
+        return super().fit(data, epochs)
 
     def call(self, inputs: tuple):
         # EXPLORE USE TF SPARSE TENSORS
@@ -63,3 +70,7 @@ class Doc2Vec(Model):
     def from_config(cls, config: dict) -> "Doc2Vec":
         return cls(**config)
 
+    def predict(self, ids: List[int]) -> np.array:
+        import pdb; pdb.set_trace()
+        transfomed_ids = self.extras["pid_encoder"].transform(ids)
+        return self.paragraph_embeddings.get_weights()[0][transfomed_ids]

@@ -1,8 +1,9 @@
 from fashion_recommender.data.articles import Articles
 from fashion_recommender.models.doc2vec import Doc2Vec
-from fashion_recommender.models.plotters import ModelPlotter
 from fashion_recommender.models.serializers.disk import DiskSerializer
 from fashion_recommender.models.deserializers.disk import DiskDeserializer
+from fashion_recommender.pipelines.predictions import PredictionPipeline
+from fashion_recommender.pipelines.training import TrainingPipeline
 
 
 if __name__ == "__main__":
@@ -12,13 +13,12 @@ if __name__ == "__main__":
         vocabulary_size=articles.vocabulay_size,
         ngram_size=articles.window
     )
-
-    model.fit(articles.dataset, epochs=50)
-    plotter = ModelPlotter()
     serializer = DiskSerializer()
-    serializer.write(model)
-    plotter.plot(model=model)
-    plotter.show()
+    pipeline = TrainingPipeline(model=model, data=articles, serializer=serializer)
+    pipeline.run(epochs=10)
     # deserializer = DiskDeserializer()
-    # model = deserializer.load(custom_type=Doc2Vec)
+    # pipeline = PredictionPipeline(model_type=Doc2Vec, deserializer=deserializer)
+    # results = pipeline.run(to_predict=)
+    # lel = list(results)
+
     # import pdb; pdb.set_trace()

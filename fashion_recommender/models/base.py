@@ -2,10 +2,24 @@ from abc import ABCMeta
 import tensorflow as tf
 import pandas as pd
 
+from typing import Any, Dict
+
+from fashion_recommender.data.base import FashionDataset
+
+class PredictRequirement:
+    pass
+
 class Model(tf.keras.Model, metaclass=ABCMeta):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.extras: Dict[str, Any] = {}
+
     @property
     def name(self) -> str:
         return self.__class__.__name__
+    
+    def fit(self, data: FashionDataset, epochs: int):
+        super(Model, self).fit(data.dataset, epochs=epochs)
 
     def model_training_history(self) -> pd.DataFrame:
         """Model training results as a pd.DataFrame"""
@@ -13,3 +27,9 @@ class Model(tf.keras.Model, metaclass=ABCMeta):
     
     def get_config(self):
         raise NotImplementedError
+
+    def add_extra(self, extra, name: str) -> None:
+        self.extras[name] =  extra
+    
+    def predict(self, x, batch_size=None, verbose="auto", steps=None, callbacks=None, max_queue_size=10, workers=1, use_multiprocessing=False):
+        return super().predict(x, batch_size, verbose, steps, callbacks, max_queue_size, workers, use_multiprocessing)
