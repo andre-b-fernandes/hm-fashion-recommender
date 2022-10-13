@@ -26,8 +26,8 @@ class PredictionPipeline:
             custom_type=model_type
         )
 
-    def run(self, to_predict: List[Any]) -> Generator:
-        to_predict = ToPredict(iterable=to_predict)
+    def run(self, to_predict: List[Any], batch_size: int = 256) -> Generator:
+        to_predict = ToPredict(iterable=to_predict, batch_size=batch_size)
         for batch in to_predict:
             prediction = self.model.predict(batch)
             yield prediction

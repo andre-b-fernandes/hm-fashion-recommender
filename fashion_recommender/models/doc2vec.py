@@ -71,6 +71,5 @@ class Doc2Vec(Model):
         return cls(**config)
 
     def predict(self, ids: List[int]) -> np.array:
-        import pdb; pdb.set_trace()
         transfomed_ids = self.extras["pid_encoder"].transform(ids)
         return self.paragraph_embeddings.get_weights()[0][transfomed_ids]
