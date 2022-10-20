@@ -5,6 +5,7 @@ from fashion_recommender.models.deserializers.disk import DiskDeserializer
 from fashion_recommender.pipelines.predictions import PredictionPipeline
 from fashion_recommender.pipelines.training import TrainingPipeline
 
+from fashion_recommender.cli import cli
 
 if __name__ == "__main__":
     # articles = Articles(window=5)
@@ -16,9 +17,9 @@ if __name__ == "__main__":
     # serializer = DiskSerializer()
     # pipeline = TrainingPipeline(model=model, data=articles, serializer=serializer)
     # pipeline.run(epochs=10)
-    deserializer = DiskDeserializer()
-    pipeline = PredictionPipeline(model_type=Doc2Vec, deserializer=deserializer)
-    results = pipeline.run(to_predict=pipeline.model.extras["pid_encoder"].classes_, batch_size=128)
-    lel = list(results)
+    # deserializer = DiskDeserializer()
+    # pipeline = PredictionPipeline(model_type=Doc2Vec, deserializer=deserializer)
+    # results = pipeline.run(to_predict=pipeline.model.extras["pid_encoder"].classes_, batch_size=128)
+    # lel = list(results)
+    cli()
 
-    import pdb; pdb.set_trace()
