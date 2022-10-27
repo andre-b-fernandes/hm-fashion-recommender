@@ -1,13 +1,14 @@
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from pymilvus import (
     Collection,
     connections,
     CollectionSchema,
     FieldSchema,
-    DataType
+    DataType,
 )
 
 from dataclasses import dataclass
+from fashion_recommender.sink import Vector
 from fashion_recommender.sink.clients import (
     FieldConfig,
     StringField,
@@ -52,7 +53,7 @@ class MilvusClient:
             **config.params
         )
         self._connection_count += 1
-        self._structures = {}
+        self._structures: Dict[str, Collection] = {}
     
 
     def create_vector_structure(self, config: StructureConfig) -> None:
@@ -89,3 +90,18 @@ class MilvusClient:
             collection.create_index(field_name=config.index_by)
 
         self._structures[config.name] = collection
+    
+    def insert_vectors(self, structure: str, vectors: List[Vector]):
+        if structure in self._structures:
+            structure = self._structures[structure]
+        else:
+            structure = Collection(name=structure, using=self._alias)
+            structure.load()
+
+        names, vecs = list(zip(*map(lambda vec: (vec.name, vec.vector), vectors) ))
+
+        data =[
+            names,
+            vecs
+        ]
+        structure.insert(data) 

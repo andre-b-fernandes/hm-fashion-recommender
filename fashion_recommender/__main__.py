@@ -18,8 +18,9 @@ if __name__ == "__main__":
     # pipeline = TrainingPipeline(model=model, data=articles, serializer=serializer)
     # pipeline.run(epochs=10)
     # deserializer = DiskDeserializer()
+    # doc2vec = deserializer.load(custom_type=Doc2Vec)
+    # import pdb; pdb.set_trace()
     # pipeline = PredictionPipeline(model_type=Doc2Vec, deserializer=deserializer)
     # results = pipeline.run(to_predict=pipeline.model.extras["pid_encoder"].classes_, batch_size=128)
     # lel = list(results)
     cli()
-
