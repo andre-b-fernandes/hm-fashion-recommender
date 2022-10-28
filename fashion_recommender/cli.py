@@ -23,7 +23,6 @@ def milvus():
 @click.argument("host")
 @click.argument("port")
 def setup(host: str, port: str):
-    click.echo(f"Setup {host}:{port}")
     config = MilvusConfig(host=host, port=port)
     client = MilvusClient(config=config)
     product_id_field = FieldConfig(name="product_id", primary_key=True)
@@ -42,14 +41,12 @@ def pipelines():
 @click.option("--port")
 @click.option("--structure")
 def predictions(model: str, sink: str, host: str, port: str, structure: str):
-    print(host)
-    print(port)
     config = MilvusConfig(host=host, port=port)
     client = MilvusClient(config=config)
     sink = VectorSink(client=client)
     deserializer = DiskDeserializer()
     pipeline = PredictionSinkPipeline(model_type=Doc2Vec, deserializer=deserializer, sink=sink)
-    pipeline.run(to_predict=pipeline.model.extras["pid_encoder"].classes_, structure_name="products", batch_size=128)
+    pipeline.run(to_predict=pipeline.model.extras["pid_encoder"].classes_, structure_name=structure, batch_size=128)
 
 
 if __name__ == "__main__":

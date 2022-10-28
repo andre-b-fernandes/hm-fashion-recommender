@@ -1,6 +1,6 @@
 from typing import List
 from fashion_recommender.sink import Vector
-from fashion_recommender.sink.clients.milvus import MilvusClient
+from fashion_recommender.clients.milvus import MilvusClient
 
 
 class VectorSink:

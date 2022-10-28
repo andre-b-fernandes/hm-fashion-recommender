@@ -105,3 +105,19 @@ class MilvusClient:
             vecs
         ]
         structure.insert(data) 
+
+    def search_vectors(self, structure: str, vectors: List[Vector]):
+        if structure in self._structures:
+            structure = self._structures[structure]
+        else:
+            structure = Collection(name=structure, using=self._alias)
+            structure.load()
+
+        vecs = [vec.vector for vec in vectors]
+
+        structure.search(
+            data=vecs,
+            anns_field="doc2vec_128",
+            param={"metric_type}
+        )
+

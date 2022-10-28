@@ -69,7 +69,7 @@ class Articles(FashionDataset):
         self.paragraph_vectorizer = CountVectorizer(max_features=self.MAX_FEATURES, stop_words={"english"})
         self.window = window
         super(Articles, self).__init__()
-    
+
     def _create_dataset(self) -> tf.data.Dataset:
         _dataset = _articles_dataset()
 
